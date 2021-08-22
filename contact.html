@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./contact.css" />
+    <title>Shally's Cafe</title>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li>
+          <a href="home.html">Home</a>
+        </li>
+        <li>
+          <a href="./contact.html">Contact Us</a>
+        </li>
+        <li>
+          <a href="./book.html">Book a Table</a>
+        </li>
+        <li>
+          <a href="./bookings.html">Bookings</a>
+        </li>
+      </ul>
+    </nav>
+
+    <header>
+      <h1>Contact Us - Shally's Cafe</h1>
+      <p>Best coffee in town ☕</p>
+    </header>
+
+    <main>
+      <form class="contact-form" onsubmit="return submitMessage(event);">
+        <!-- Email -->
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email" required />
+        <!-- Full name -->
+        <label for="full-name">Full Name</label>
+        <input type="text" name="full-name" id="full-name" required />
+        <!-- Reason for comment -->
+        <label for="feedback-type">Feedback Type</label>
+        <select name="feedback-type" id="feedback-type">
+          <option value="review">Review</option>
+          <option value="complaint">Complaint</option>
+          <option value="event">Book Event</option>
+        </select>
+        <label for="comment">Comment</label>
+        <textarea name="comment" id="comment" cols="30" rows="3" required>
+Leave your comment here</textarea
+        >
+        <!-- Clear button -->
+        <button>Clear</button>
+        <!-- Submit button -->
+        <input type="submit" />
+      </form>
+    </main>
+
+    <footer>
+      <div class="form-title-section">
+        <h3>Contact Messages</h3>
+        <button onclick="deleteMessages()">Clear Messages</button>
+      </div>
+
+      <div class="form-wrapper">
+        <dl id="currentMessages"></dl>
+      </div>
+    </footer>
+
+    <script>
+      // Delete function
+      const deleteMessages = function () {
+        // console.log("It's working!");
+        // 1. Check if messages key exists
+        if (window.sessionStorage.getItem("messages")) {
+          // 2. If it exists, remove it (this will delete the messages)
+          window.sessionStorage.removeItem("messages");
+        }
+
+        // 3. Now that we have removed the messages in sessionStorage, we have to update what is showing on the webpage (so messages should not be showing on screen anymore too). To do this, we can call the renderMessages function again
+        renderMessages();
+      };
+
+      // Create a function that triggers when the Submit button is clicked (this happens because we put the attribute "onsubmit = submitMessage(event) on the form element")
+      function submitMessage(event) {
+        event.preventDefault();
+
+        // target all the form elements and save their value into variables
+        const email = document.getElementById("email").value;
+        const fullName = document.getElementById("full-name").value;
+        const feedbackType = document.getElementById("feedback-type").value;
+        const comment = document.getElementById("comment").value;
+
+        // create a new object containing the form information
+        const messageObject = {
+          email,
+          fullName,
+          feedbackType,
+          comment,
+        };
+
+        // create an empty array where the message objects will be stored
+        let currentMessages = [];
+
+        // Check if there is already anything stored in the session storage under the "messages" key. If it is there, change currentMessages to store that array.
+        if (window.sessionStorage.getItem("messages")) {
+          currentMessages = JSON.parse(
+            window.sessionStorage.getItem("messages")
+          );
+        }
+
+        // push the details input by the user (in object form) into the form to the currentMessages array.
+        currentMessages.push(messageObject);
+
+        // update the session storage by setting the key-value pair as "messages"(the key), and the currentMessages array(the value).
+        window.sessionStorage.setItem(
+          "messages",
+          JSON.stringify(currentMessages)
+        );
+
+        renderMessages();
+      }
+
+      // Render function
+      const renderMessages = function () {
+        let currentMessages = [];
+
+        // 1. Check if there are messages stored in sessionStorage. If so, get them...
+        if (window.sessionStorage.getItem("messages")) {
+          // 2. ...put them into a new variable (note, it will be stored as an array because that is what it was originally input as (before we JSON stringified it))
+          currentMessages = JSON.parse(
+            window.sessionStorage.getItem("messages")
+          );
+        }
+
+        // 3. make an empty array where the html will be stored
+        let listItems = [];
+
+        // 4. loop through currentMessages
+        for (let i = 0; i < currentMessages.length; i++) {
+          // Note: each element in currentMessages is an object containing the following keys (and their values):  email, fullName, feedbackType, comment.
+
+          // 5. Start with an empty string
+          let listItem = "";
+
+          // 6. For each object in currentMessages...
+          const currentMessage = currentMessages[i];
+          // ... add HTML to the string
+          listItem += `<dt>${currentMessage.fullName}: ${currentMessage.email}</dt>`;
+          listItem += `<dd>${currentMessage.feedbackType}: ${currentMessage.comment}</dd>`;
+          // and we also want a line break to between the objects
+          listItem += `<br />`;
+
+          // 7. push the listItem into the listItems array (each element of this array will be a string with the HTML for each object/message), which we will render later
+          listItems.push(listItem);
+        }
+
+        // 8. Target the empty dl element we made in our HTML
+        let descList = document.getElementById("currentMessages");
+
+        // 9. Change the innerHTML of descList. Note, since the HTML we wrote through our function is currently stored in an array (listItems), we need to make it into a string
+        descList.innerHTML = listItems.join("");
+      };
+
+      renderMessages();
+    </script>
+  </body>
+</html>

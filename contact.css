@@ -1,0 +1,31 @@
+main {
+  display: flex;
+  justify-content: center;
+}
+
+main > .contact-form {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  row-gap: 10px;
+  column-gap: 10px;
+}
+
+footer {
+  margin-top: 50px;
+}
+
+.form-wrapper {
+  /* display: flex;
+  justify-content: center; */
+  text-align: center;
+}
+
+.form-title-section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.form-title-section > * {
+  /* margin-top: 10px; */
+  margin-bottom: 20px;
+}
